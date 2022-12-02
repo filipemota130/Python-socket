@@ -1,9 +1,9 @@
-import socket
+import os, socket
 port= 9000
 servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-ip = 'localhost'
+ip = '192.168.0.3'
 servidor.bind((ip, port))
 
 while True:
@@ -14,14 +14,33 @@ while True:
 
     if connection:
         print("ocorreu uma conexão com o usuario", address)
+       
+    opcao = connection.recv(1024).decode() #Recebe a opção desejada do cliente
+    if (opcao == '1'):
+        namefile = connection.recv(1024).decode() #Recebe a string do nome a fazer download
+        try:
+            with open(namefile, 'rb') as file:
+                for line in file.readlines():
+                    connection.send(line)
+        except FileNotFoundError as error:
+            print(error)
+            connection.send("erro".encode())
+        connection.close()
+    
+    elif (opcao == '2'):
+        namefile2 = connection.recv(1024).decode() #Recebe a string do nome a fazer upload
         
-    namefile = connection.recv(1024).decode()
+        with open(namefile2,'wb') as file:
+            while True:
+                data = connection.recv(1000000)
+                if data == b'erro':
+                    print("arquivo inexistente")
+                    os.remove(namefile2)
+                    exit()
+                if not data:
+                    break
+                file.write(data)
+            print(f"{namefile2} recebido!")
 
-    try:
-        with open(namefile, 'rb') as file:
-            for line in file.readlines():
-                connection.send(line)
-    except FileNotFoundError as error:
-        print(error)
-        connection.send("erro".encode())
-    connection.close()
+    elif (opcao == '3'):
+        connection.close()
