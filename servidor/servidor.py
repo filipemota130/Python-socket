@@ -16,8 +16,14 @@ while True:
         print("ocorreu uma conexão com o usuario", address)
        
     opcao = connection.recv(1024).decode() #Recebe a opção desejada do cliente
+    
     if (opcao == '1'):
+        filelist = os.listdir()
+        filelist = str(filelist) #Envia a lista de arquivos no servidor
+        connection.send(filelist.encode())
+        
         namefile = connection.recv(1024).decode() #Recebe a string do nome a fazer download
+        
         try:
             with open(namefile, 'rb') as file:
                 for line in file.readlines():
