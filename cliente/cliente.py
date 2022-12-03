@@ -9,9 +9,12 @@ opcao = str(input("Escolha se quer fazer download ou upload:\n[1] - Fazer downla
 client.send(opcao.encode())
 
 if (opcao == '1'):
+    filelist = client.recv(4096).decode() #Recebe a lista de arquivos do servidor e mostra
+    print("Lista de arquivos no servidor:\n", filelist)
+    
     namefile = str(input("insira o nome do arquivo: "))
     client.send(namefile.encode()) #envia uma string com o nome do arquivo a fazer download
-    
+
     with open(namefile,'wb') as file:
         while True:
             data = client.recv(1000000)
@@ -25,6 +28,8 @@ if (opcao == '1'):
         print(f"{namefile} recebido!")
 
 elif (opcao == '2'):
+    print("Lista de arquivos no cliente:\n", os.listdir()) #Mostra os arquivos no cliente
+    
     namefile2 = str(input("insira o nome do arquivo: "))
     client.send(namefile2.encode()) #envia uma string com o nome do arquivo a fazer upload
 
