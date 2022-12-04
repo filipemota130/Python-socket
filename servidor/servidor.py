@@ -1,5 +1,5 @@
 import os, socket, threading
-ip = '192.168.0.3'
+ip = 'localhost'
 port= 9000
 
 

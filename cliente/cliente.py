@@ -1,5 +1,5 @@
-import os,socket, threading, ast
-ip_server = '192.168.0.3'
+import os,socket, threading, ast, pick
+ip_server = 'localhost'
 
 while True:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,16 +15,21 @@ while True:
         
         print("Lista de arquivos no servidor:\n")
         
-        for i in range(len(filelist)):
-            print(f'{i+1}: {filelist[i]}')
+        #for i in range(len(filelist)):
+            #print(f'{i+1}: {filelist[i]}')
         
+        options = filelist
+        option, index = pick.pick(options, "", indicator='=>', default_index=0)
+        print(option)
                 
             
-        id_arquivo = int(input("Insira o ID do arquivo: "))
-        if id_arquivo > len(filelist):
-            namefile = ''
-        else :
-            namefile = filelist[id_arquivo -1]
+        #id_arquivo = int(input("Insira o ID do arquivo: "))
+        #if id_arquivo > len(filelist):
+            #namefile = ''
+        #else :
+            #namefile = filelist[id_arquivo -1]
+        
+        namefile = option
         client.send(namefile.encode()) #envia uma string com o nome do arquivo a fazer download
 
         with open(namefile,'wb') as file:
@@ -43,15 +48,21 @@ while True:
     elif (opcao == '2'):
         print("Lista de arquivos no cliente:") #Mostra os arquivos no cliente
     
-        for i in range(len(os.listdir())):
-            print(f'{i+1}: {os.listdir()[i]}')
+        #for i in range(len(os.listdir())):
+            #print(f'{i+1}: {os.listdir()[i]}')
         
                 
-        id_arquivo = int(input("Insira o ID do arquivo: "))
-        if id_arquivo > len(os.listdir()):
-            namefile2 = ''
-        else :
-            namefile2 = os.listdir()[id_arquivo -1]
+        #id_arquivo = int(input("Insira o ID do arquivo: "))
+        #if id_arquivo > len(os.listdir()):
+            #namefile2 = ''
+        #else :
+            #namefile2 = os.listdir()[id_arquivo -1]
+            
+        options2 = os.listdir()
+        option2, index = pick.pick(options2, "", indicator='=>', default_index=0)
+        print(option2)
+        
+        namefile2 = option2
         client.send(namefile2.encode()) #envia uma string com o nome do arquivo a fazer upload
 
         try: #Função que tava na parte de download do servidor p/ enviar o arquivo
