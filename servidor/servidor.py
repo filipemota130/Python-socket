@@ -1,7 +1,6 @@
 import os, socket, threading
-ip = '192.168.0.3'
+ip = 'localhost'
 port= 9000
-
 
 def download(connection): #função download
     filelist = os.listdir()
@@ -62,5 +61,5 @@ def Main():
         
         elif (opcao == '3'):
             connection.close()
-
+            
 Main()
