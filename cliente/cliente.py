@@ -11,11 +11,9 @@ client.send(opcao.encode())
 if (opcao == '1'):
     filelist = client.recv(4096).decode() #Recebe a lista de arquivos do servidor e mostra.
     filelist = ast.literal_eval(filelist)
-        
-    print("Lista de arquivos no servidor:\n")
-        
+  
     options = filelist
-    option, index = pick.pick(options, "", indicator='=>', default_index=0)
+    option, index = pick.pick(options, "Lista de arquivos no servidor:", indicator='=>', default_index=0)
     print(option)
     
     namefile = option
@@ -39,10 +37,9 @@ if (opcao == '1'):
         print("Conexão com o servidor encerrada.")
         exit()
 elif (opcao == '2'):
-    print("Lista de arquivos no cliente:\n", os.listdir()) #Mostra os arquivos no cliente.
-    
+
     options2 = os.listdir()
-    option2, index = pick.pick(options2, "", indicator='=>', default_index=0)
+    option2, index = pick.pick(options2, "Lista de arquivos no cliente:", indicator='=>', default_index=0)
     print(option2)
         
     namefile2 = option2
