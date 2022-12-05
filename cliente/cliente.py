@@ -1,4 +1,4 @@
-import os,socket
+import os, socket, ast, pick
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -8,20 +8,22 @@ client.connect((ip_server, 9000))
 opcao = str(input(">>> Transferência de Arquivos por TCP <<<\n[1] - Fazer download de um arquivo do servidor;\n[2] - Fazer upload de um arquivo para o servidor;\n[3] - Encerrar a conexão com o servidor.\nInforme sua escolha: "))
 client.send(opcao.encode())
 
-if (opcao == '1'):
-    print("entrou cliente 1")
-    filelist = client.recv(4096).decode() #Recebe a lista de arquivos do servidor e mostra.
-    print("Lista de arquivos no servidor:\n", filelist)
+if (opcao == '1'): #Download.
+    filelist = client.recv(4096).decode() #Recebe a lista de arquivos do servidor.
+    filelist = ast.literal_eval(filelist)
+  
+    options = filelist
+    option, index = pick.pick(options, "Lista de arquivos no servidor:", indicator = '=>', default_index = 0)
+    print(option) #Mostra as opções.
     
-    namefile = str(input("Insira o nome do arquivo desejado: "))
-    client.send(namefile.encode()) #Envia uma string com o nome do arquivo a fazer download.
+    namefile = option
+    client.send(namefile.encode()) #Envia o nome do arquivo a ser baixado.
 
     nope = 0
     with open(namefile,'wb') as file:
         while True:
             data = client.recv(1000000)
             if data == b'erro':
-
                 print("Arquivo inexistente.")
                 nope = 1
                 break
@@ -33,18 +35,23 @@ if (opcao == '1'):
         os.remove(namefile)
         print("Conexão com o servidor encerrada.")
         exit()
-elif (opcao == '2'):
-    print("Lista de arquivos no cliente:\n", os.listdir()) #Mostra os arquivos no cliente.
-    
-    namefile2 = str(input("Insira o nome do arquivo: "))
-    client.send(namefile2.encode()) #Envia uma string com o nome do arquivo a fazer upload.
+elif (opcao == '2'): #Upload.
+    options=[]
+    for diretorio,sub,arquivos in os.walk('./'):
+        for arquivo in arquivos:
+            options.append(arquivo)
+    option, index = pick.pick(options, "Lista de arquivos no cliente:", indicator = '=>', default_index = 0)
+    print(option)
+        
+    namefile = option
+    client.send(namefile.encode()) #Envia o nome do arquivo a ser enviado ao servidor.
 
-    try: #Função que tava na parte de download do servidor p/ enviar o arquivo.
-        with open(namefile2, 'rb') as file:
+    try: 
+        with open(namefile, 'rb') as file:
             for line in file.readlines():
                 client.send(line)
-            print(f"Arquivo \"{namefile2}\" enviado para o servidor.")
-    except FileNotFoundError as error:
+            print(f"Arquivo \"{namefile}\" enviado para o servidor.")
+    except FileNotFoundError:
         print("Arquivo inexistente.")
         client.send("erro".encode())
     print("Conexão com o servidor encerrada.")
