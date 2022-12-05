@@ -1,4 +1,4 @@
-import os,socket
+import os,socket,ast,pick
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -10,9 +10,15 @@ client.send(opcao.encode())
 
 if (opcao == '1'):
     filelist = client.recv(4096).decode() #Recebe a lista de arquivos do servidor e mostra.
-    print("Lista de arquivos no servidor:\n", filelist)
+    filelist = ast.literal_eval(filelist)
+        
+    print("Lista de arquivos no servidor:\n")
+        
+    options = filelist
+    option, index = pick.pick(options, "", indicator='=>', default_index=0)
+    print(option)
     
-    namefile = str(input("Insira o nome do arquivo desejado: "))
+    namefile = option
     client.send(namefile.encode()) #Envia uma string com o nome do arquivo a fazer download.
 
     nope = 0
@@ -35,7 +41,11 @@ if (opcao == '1'):
 elif (opcao == '2'):
     print("Lista de arquivos no cliente:\n", os.listdir()) #Mostra os arquivos no cliente.
     
-    namefile2 = str(input("Insira o nome do arquivo: "))
+    options2 = os.listdir()
+    option2, index = pick.pick(options2, "", indicator='=>', default_index=0)
+    print(option2)
+        
+    namefile2 = option2
     client.send(namefile2.encode()) #Envia uma string com o nome do arquivo a fazer upload.
 
     try: #Função que tava na parte de download do servidor p/ enviar o arquivo.
