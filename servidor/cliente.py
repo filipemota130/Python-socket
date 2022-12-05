@@ -37,10 +37,9 @@ if (opcao == '1'): #Download.
         
 elif (opcao == '2'): #Upload.
     options=[]
-    for diretorio,sub,arquivos in os.walk(top='./'):
+    for diretorio,sub,arquivos in os.walk(top='./', topdown=False):
         for arquivo in arquivos:
-            if os.path.exists(os.getcwd()+'/'+arquivo):
-                options.append(arquivo)
+            options.append(arquivo)
     option, index = pick.pick(options, "Lista de arquivos no cliente:", indicator = '=>', default_index = 0)
         
     namefile = option

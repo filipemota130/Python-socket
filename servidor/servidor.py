@@ -2,15 +2,16 @@ import os, socket, threading
 servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-ip = 'localhost'
+ip_server = 'localhost'
 porta = 9000
-servidor.bind((ip, porta))
+servidor.bind((ip_server, porta))
 
 def client_download(connection):
     filelist=[]
-    for diretorio,sub,arquivos in os.walk('./'):
+    for diretorio,sub,arquivos in os.walk(top='./', topdown=False):
         for arquivo in arquivos:
-            filelist.append(arquivo)
+            if os.path.exists(os.getcwd()+'/'+arquivo):
+                filelist.append(arquivo)
     filelist = str(filelist) 
     connection.send(filelist.encode()) #Envia a lista de arquivos contidos no servidor para o cliente.
         
