@@ -12,27 +12,35 @@ def client_download(connection):
         for arquivo in arquivos:
             if os.path.exists(os.getcwd()+'/'+arquivo):
                 filelist.append(arquivo)
-    filelist = str(filelist) 
+    filelist = str(filelist)
     connection.send(filelist.encode()) #Envia a lista de arquivos contidos no servidor para o cliente.
         
     namefile = connection.recv(1024).decode() #Recebe o nome do arquivo ser mandado para o cliente.
-        
-    with open(namefile, 'rb') as file:
-        for line in file.readlines():
-            connection.send(line)
-        print(f"Arquivo \"{namefile}\" enviado para o cliente {address}.")
-    connection.close()
+    
+    if namefile == 'end':
+        print(f"A conexão com o cliente {address} foi encerrada.")
+        connection.close()
+    else:
+        with open(namefile, 'rb') as file:
+            for line in file.readlines():
+                connection.send(line)
+            print(f"Arquivo \"{namefile}\" enviado para o cliente {address}.")
+        connection.close()
 
 def client_upload(connection):
     namefile = connection.recv(1024).decode() #Recebe o nome a do arquivo a ser recebido.
-        
-    with open(namefile,'wb') as file:
-        while True:
-            data = connection.recv(100000000) #Recebe a informação que corresponde ao arquivo enviado pelo cliente.
-            if not data:
-                break
-            file.write(data) #Coloca a informação em um novo arquivo de mesmo nome que o original. 
-        print(f"Arquivo \"{namefile}\" recebido.")
+    
+    if namefile == 'end':
+        print(f"A conexão com o cliente {address} foi encerrada.")
+        connection.close()
+    else:
+        with open(namefile,'wb') as file:
+            while True:
+                data = connection.recv(100000000) #Recebe a informação que corresponde ao arquivo enviado pelo cliente.
+                if not data:
+                    break
+                file.write(data) #Coloca a informação em um novo arquivo de mesmo nome que o original. 
+            print(f"Arquivo \"{namefile}\" recebido.")
 
 while True:
     servidor.listen(2)

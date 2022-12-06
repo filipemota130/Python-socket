@@ -11,10 +11,17 @@ client.send(opcao.encode())
 if (opcao == '1'): #Download.
     filelist = client.recv(4096).decode() #Recebe a lista de arquivos do servidor.
     filelist = ast.literal_eval(filelist)
-  
+    
     options = filelist
+    options.remove('servidor.py')
+    options.append("[Encerrar]")
     option, index = pick.pick(options, "Lista de arquivos no servidor:", indicator = '=>', default_index = 0)
     
+    if option == '[Encerrar]':
+        client.send('end'.encode())
+        client.close()
+        exit()
+        
     namefile = option
     client.send(namefile.encode()) #Envia o nome do arquivo a ser baixado.
 
@@ -37,6 +44,12 @@ elif (opcao == '2'): #Upload.
         for arquivo in arquivos:
             if os.path.exists(os.getcwd()+'/'+arquivo):
                 options.append(arquivo)
+    options.remove('cliente.py')
+    if options == []:
+        print('Diretório vazio.')
+        client.send('end'.encode())
+        client.close()
+        exit()
     option, index = pick.pick(options, "Lista de arquivos no cliente:", indicator = '=>', default_index = 0)
         
     namefile = option
