@@ -2,7 +2,7 @@ import os, socket, ast, pick
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-ip_server = '192.168.0.111'
+ip_server = '192.168.0.103'
 client.connect((ip_server, 9000))
 
 opcao = str(input(">>> Transferência de Arquivos por TCP <<<\n[1] - Fazer download de um arquivo do servidor;\n[2] - Fazer upload de um arquivo para o servidor;\n[3] - Encerrar a conexão com o servidor.\nInforme sua escolha: "))
@@ -41,10 +41,11 @@ if (opcao == '1'): #Download.
         
 elif (opcao == '2'): #Upload.
     options=[]
-    for diretorio,sub,arquivos in os.walk(top='./'):
+    for diretorio,sub,arquivos in os.walk('./'):
+        if str(diretorio) != "./":
+            break
         for arquivo in arquivos:
-            if str(diretorio) == "./":
-                options.append(arquivo)
+            options.append(arquivo)
     options.remove('cliente.py')
     if options == []:
         print('Diretório vazio.')
