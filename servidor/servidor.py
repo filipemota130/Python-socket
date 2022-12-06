@@ -2,13 +2,13 @@ import os, socket, threading
 servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-ip_server = 'localhost'
+ip_server = '192.168.0.111'
 porta = 9000
 servidor.bind((ip_server, porta))
 
 def client_download(connection):
     filelist=[]
-    for diretorio,sub,arquivos in os.walk(top='./', topdown=False):
+    for diretorio,sub,arquivos in os.walk('.'):
         for arquivo in arquivos:
             if os.path.exists(os.getcwd()+'/'+arquivo):
                 filelist.append(arquivo)
