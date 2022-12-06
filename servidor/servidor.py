@@ -2,7 +2,7 @@ import os, socket, threading
 servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-ip_server = '192.168.0.111'
+ip_server = 'localhost'
 porta = 9000
 servidor.bind((ip_server, porta))
 
