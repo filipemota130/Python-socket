@@ -22,10 +22,6 @@ if (opcao == '1'): #Download.
     with open(namefile,'wb') as file:
         while True:
             data = client.recv(1000000)
-            if data == b'erro':
-                print("Arquivo inexistente.")
-                nope = 1
-                break
             if not data:
                 break
             file.write(data)
@@ -46,14 +42,10 @@ elif (opcao == '2'): #Upload.
     namefile = option
     client.send(namefile.encode()) #Envia o nome do arquivo a ser enviado ao servidor.
 
-    try: 
-        with open(namefile, 'rb') as file:
-            for line in file.readlines():
-                client.send(line)
-            print(f"Arquivo \"{namefile}\" enviado para o servidor.")
-    except FileNotFoundError:
-        print("Arquivo inexistente.")
-        client.send("erro".encode())
+    with open(namefile, 'rb') as file:
+        for line in file.readlines():
+            client.send(line)
+        print(f"Arquivo \"{namefile}\" enviado para o servidor.")
     print("Conexão com o servidor encerrada.")
     client.close()
 elif (opcao == '3'): print("Conexão com o servidor encerrada.")

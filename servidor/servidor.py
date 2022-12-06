@@ -17,14 +17,10 @@ def client_download(connection):
         
     namefile = connection.recv(1024).decode() #Recebe o nome do arquivo ser mandado para o cliente.
         
-    try:
-        with open(namefile, 'rb') as file:
-            for line in file.readlines():
-                connection.send(line)
-            print(f"Arquivo \"{namefile}\" enviado para o cliente {address}.")
-    except FileNotFoundError:
-        print(f"O cliente {address} requisitou um arquivo inexistente.")
-        connection.send("erro".encode())
+    with open(namefile, 'rb') as file:
+        for line in file.readlines():
+            connection.send(line)
+        print(f"Arquivo \"{namefile}\" enviado para o cliente {address}.")
     connection.close()
 
 def client_upload(connection):
@@ -33,10 +29,6 @@ def client_upload(connection):
     with open(namefile,'wb') as file:
         while True:
             data = connection.recv(100000000) #Recebe a informação que corresponde ao arquivo enviado pelo cliente.
-            if data == b'erro':
-                print("Arquivo inexistente.")
-                os.remove(namefile)
-                exit()
             if not data:
                 break
             file.write(data) #Coloca a informação em um novo arquivo de mesmo nome que o original. 
