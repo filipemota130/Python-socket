@@ -2,7 +2,7 @@ import os, socket, ast, pick
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-ip_server = 'localhost'
+ip_server = '192.168.0.111'
 client.connect((ip_server, 9000))
 
 opcao = str(input(">>> Transferência de Arquivos por TCP <<<\n[1] - Fazer download de um arquivo do servidor;\n[2] - Fazer upload de um arquivo para o servidor;\n[3] - Encerrar a conexão com o servidor.\nInforme sua escolha: "))
@@ -13,7 +13,8 @@ if (opcao == '1'): #Download.
     filelist = ast.literal_eval(filelist)
     
     options = filelist
-    options.remove('servidor.py')
+    if "servidor.py" in options:
+        options.remove('servidor.py')
     options.append("[Encerrar]")
     option, index = pick.pick(options, "Lista de arquivos no servidor:", indicator = '=>', default_index = 0)
     
@@ -42,7 +43,7 @@ elif (opcao == '2'): #Upload.
     options=[]
     for diretorio,sub,arquivos in os.walk(top='./'):
         for arquivo in arquivos:
-            if os.path.exists(os.getcwd()+'/'+arquivo):
+            if str(diretorio) == "./":
                 options.append(arquivo)
     options.remove('cliente.py')
     if options == []:
@@ -50,7 +51,13 @@ elif (opcao == '2'): #Upload.
         client.send('end'.encode())
         client.close()
         exit()
+    options.append("[Encerrar]")
     option, index = pick.pick(options, "Lista de arquivos no cliente:", indicator = '=>', default_index = 0)
+
+    if option == '[Encerrar]':
+        client.send('end'.encode())
+        client.close()
+        exit()    
         
     namefile = option
     client.send(namefile.encode()) #Envia o nome do arquivo a ser enviado ao servidor.
